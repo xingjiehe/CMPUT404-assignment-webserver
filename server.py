@@ -90,11 +90,22 @@ class MyWebServer(socketserver.BaseRequestHandler):
         return file and mime-types
         :param file: filename string
         """
-        content_type, _ = mimetypes.guess_type(file)
+        content_type = self.guess_type(str(file))
         self.request.send(b'HTTP/1.1 200 OK\r\n')
         self.request.send(('Content-Type: {}\r\n'.format(content_type)).encode('utf-8'))
         self.request.send(b'\r\n')
-        self.request.sendfile(open(file, 'rb'))
+        self.request.sendfile(open(str(file), 'rb'))
+    
+    def guess_type(self, filename):
+        if filename.endswith(".css"):
+            return "text/css"
+        elif filename.endswith(".html"):
+            return "text/html"
+        elif filename.endswith(".js"):
+            return "text/javascript"
+        else:
+            return "application/octet-stream"
+
 
 
 def resolve_path(path):
